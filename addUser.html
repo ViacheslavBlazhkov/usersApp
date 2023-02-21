@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Collecting Data</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="checkInfo.js"></script>
+    <script src="firebaseConfig.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+</head>
+
+<body class="container" style="margin-top: 50px;
+	width: 50%; height:auto;">
+
+    <h2 class="text-primary" style="margin-left: 15px; margin-bottom: 10px">
+        Add User
+    </h2>
+
+    <form class="container" id="contactForm">
+        <div class="card">
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">
+                        Enter Your First Name
+                    </label>
+                    <input type="text" class="form-control" id="firstName" placeholder="First name" required>
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">
+                        Enter Your Last Name
+                    </label>
+                    <input type="text" class="form-control" id="lastName" placeholder="Last name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">
+                        Enter Your Email
+                    </label>
+                    <input type="text" class="form-control" id="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">
+                        Enter Your Phone Number
+                    </label>
+                    <input type="text" class="form-control" id="phone" placeholder="Number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">
+                        Enter Your Birthday
+                    </label>
+                    <input type="text" class="form-control" id="birthday" placeholder="Birthday" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin:5px; margin-top: -20px;">
+                Submit
+            </button>
+        </div>
+    </form>
+
+    <script src="https://www.gstatic.com/firebasejs/3.7.4/firebase.js">
+    </script>
+
+    <script>
+        function getRandom() {
+            return Math.floor(Math.random(999999) * 999999);
+        }
+        var userId = getRandom();
+
+        firebase.initializeApp(firebaseConfig);
+
+        var messagesRef = firebase.database()
+            .ref('users/' + userId);
+
+        document.getElementById('contactForm')
+            .addEventListener('submit', submitForm);
+
+        function submitForm(e) {
+            e.preventDefault();
+
+            // Get values
+            var firstName = getInputVal('firstName');
+            var lastName = getInputVal('lastName');
+
+            var email = getInputVal('email');
+            var phone = getInputVal('phone');
+
+            var birthday = getInputVal('birthday');
+
+            if (!checkInfo(firstName, lastName, email, phone, birthday)) {
+                return;
+            }
+
+            saveMessage(firstName, lastName, email, phone, birthday);
+            document.getElementById('contactForm').reset();
+        }
+
+        // Function to get form values
+        function getInputVal(id) {
+            return document.getElementById(id).value;
+        }
+
+        // Save message to firebase
+        function saveMessage(firstName, lastName, email, phone, birthday) {
+            messagesRef.set({
+                userId: userId,
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                phone: phone,
+                birthday: birthday
+            });
+            alert('Data was added!');
+        }
+    </script>
+    <a href="index.html"><button type="submit" class="btn btn-primary"
+            style="margin-left: 15px; margin-top: 10px; position: fixed; top: 40px; right: 30%;">Go back</button></a>
+</body>
+</html>
